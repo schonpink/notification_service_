@@ -21,14 +21,16 @@ notification_service should send a notification to a user who has been offered a
 # Code
 
 * Usual three - layer
-  architecture – Controller, [Service](https://github.com/schonpink/post_services/blob/master/src/main/java/post/service/CommentEventService.java), [Repository](src/main/java/analytics/repository)
+      architecture – [Controller](https://github.com/schonpink/user_service/blob/master/src/main/java/user/controller/SkillController.java), [Service](https://github.com/schonpink/user_service/blob/master/src/main/java/user/service/SkillOfferService.java), [Repository](https://github.com/schonpink/user_service/blob/master/src/main/java/user/repository/SkillOfferRepository.java)
 * The Repository layer is implemented on both JdbcTemplate and JPA (Hibernate)
 * Implemented simple Messaging via [Redis pub/sub](https://redis.io/docs/manual/pubsub/)
     * [Configuration](src/main/java/notification/config/RedisConfig.java) –
       setting up [RedisTemplate](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html) –
       a class for convenient work with Redis and Spring
-    * I implemented a SkillOfferedEventPublisher — the sender of the SkillOfferedEvent event in user_service
-    * The SkillOfferedEventListener listens to the SkillOfferedEvent events and sends a notification to the user who received the skill offer. Also for this, I created the appropriate MessageBuilder implementation to build a correct subscription message via messages.yaml . Notifications are sent in the way that the recipient of the skill has chosen as preferred. My code implements one of the ways to deliver notifications to users - by email
+    * I implemented a [SkillOfferedEventPublisher](https://github.com/schonpink/user_service/blob/master/src/main/java/user/publisher/EventSkillOfferedPublisher.java) — the sender of the SkillOfferedEvent event in [user_service](https://github.com/schonpink/user_service)
+    * The [SkillOfferedEventListener](src/main/java/notification/listener/SkillOfferedEventListener.java) listens to the [SkillOffer](https://github.com/schonpink/user_service/blob/master/src/main/java/user/entity/SkillOffer.java) events and sends a notification to the user who received the skill offer. 
+    * Also for this, I created the appropriate [MessageBuilder](src/main/java/notification/messaging/SkillOfferedMessageBuilder.java) implementation to build a correct subscription message via [messages.yaml](src/test/resources/messages.properties) . 
+    * Notifications are sent in the way that the recipient of the skill has chosen as preferred. My code implements one of the ways to deliver notifications to users - by [email](src/main/java/notification/service/EmailService.java)
 
 
 # Tests
